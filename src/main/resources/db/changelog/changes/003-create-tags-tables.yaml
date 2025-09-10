@@ -1,0 +1,59 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-create-tags-tables
+      author: dev
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: tags
+      changes:
+        - createTable:
+            tableName: tags
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_tags
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    unique: true
+                    nullable: false
+
+  - changeSet:
+      id: 003-create-post-tags-table
+      author: dev
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: post_tags
+      changes:
+        - createTable:
+            tableName: post_tags
+            columns:
+              - column:
+                  name: post_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_post_tags_post
+                    references: posts(id)
+                    deleteCascade: true
+              - column:
+                  name: tag_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_post_tags_tag
+                    references: tags(id)
+                    deleteCascade: true
+            constraints:
+              - primaryKey:
+                  primaryKeys: [post_id, tag_id]
+                  constraintName: pk_post_tags

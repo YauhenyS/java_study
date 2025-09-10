@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      id: 007-create-audit-function
+      author: dev
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: post_audit_log
+      changes:
+        - sql:
+            splitStatements: false
+            sql: |
+              CREATE OR REPLACE FUNCTION log_post_audit() RETURNS TRIGGER AS $$
+              BEGIN
+                IF TG_OP = 'INSERT' THEN
+                  INSERT INTO post_audit_log (post_id, user_id, action, new_title)
+                  VALUES (NEW.id, NEW.user_id, 'INSERT', NEW.title);
+                  RETURN NEW;
+                ELSIF TG_OP = 'UPDATE' AND OLD.title IS DISTINCT FROM NEW.title THEN
+                  INSERT INTO post_audit_log (post_id, user_id, action, old_title, new_title)
+                  VALUES (NEW.id, NEW.user_id, 'UPDATE_TITLE', OLD.title, NEW.title);
+                  RETURN NEW;
+                ELSIF TG_OP = 'DELETE' THEN
+                  INSERT INTO post_audit_log (post_id, user_id, action, old_title)
+                  VALUES (OLD.id, OLD.user_id, 'DELETE', OLD.title);
+                  RETURN OLD;
+                END IF;
+                RETURN NULL;
+              END;
+              $$ LANGUAGE plpgsql;
+
+  - changeSet:
+      id: 007-create-audit-trigger
+      author: dev
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: posts
+      changes:
+        - sql:
+            sql: |
+              CREATE TRIGGER trigger_post_audit
+              AFTER INSERT OR UPDATE OR DELETE ON posts
+              FOR EACH ROW EXECUTE FUNCTION log_post_audit();

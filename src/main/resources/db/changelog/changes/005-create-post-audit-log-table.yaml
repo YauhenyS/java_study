@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-create-post-audit-log-table
+      author: dev
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: post_audit_log
+      changes:
+        - createTable:
+            tableName: post_audit_log
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_post_audit_log
+              - column:
+                  name: post_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: action
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+                  remarks: "INSERT, UPDATE_TITLE, DELETE"
+              - column:
+                  name: old_title
+                  type: VARCHAR(255)
+              - column:
+                  name: new_title
+                  type: VARCHAR(255)
+              - column:
+                  name: action_timestamp
+                  type: TIMESTAMPTZ
+                  defaultValueComputed: CURRENT_TIMESTAMP
