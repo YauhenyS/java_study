@@ -1,10 +1,9 @@
 package smulko.yauheni.controller;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import smulko.yauheni.PostService;
+import smulko.yauheni.service.PostService;
 import smulko.yauheni.entity.Post;
 
 import java.util.List;

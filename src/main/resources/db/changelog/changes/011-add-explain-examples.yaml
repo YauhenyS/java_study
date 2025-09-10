@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: 011-explain-examples
+      author: dev
+      runAlways: true
+      changes:
+        - sql:
+            splitStatements: false
+            sql: |
+              -- EXPLAIN для поиска по заголовку (должен использовать idx_posts_title)
+              EXPLAIN ANALYZE
+              SELECT id, title FROM posts WHERE title LIKE '%Италия%';
+
+              -- EXPLAIN для активных пользователей (должен использовать idx_posts_user_created)
+              EXPLAIN ANALYZE
+              SELECT u.username, COUNT(p.id)
+              FROM users u
+              JOIN posts p ON u.id = p.user_id
+              WHERE p.created_at >= CURRENT_DATE - INTERVAL '10 days'
+              GROUP BY u.id, u.username
+              ORDER BY COUNT(p.id) DESC
+              LIMIT 5;
+
+              -- EXPLAIN для покрывающего индекса
+              EXPLAIN ANALYZE
+              SELECT id, title, created_at
+              FROM posts
+              ORDER BY created_at DESC
+              LIMIT 10;

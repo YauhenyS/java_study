@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 009-add-indexes
+      author: dev
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: posts
+      changes:
+        - sql:
+            sql: CREATE INDEX idx_posts_title ON posts USING BTREE (title);
+
+        - sql:
+            sql: CREATE INDEX idx_posts_user_created ON posts (user_id, created_at);
+
+        - sql:
+            sql: CREATE INDEX idx_posts_covering ON posts (created_at DESC) INCLUDE (id, title, user_id);

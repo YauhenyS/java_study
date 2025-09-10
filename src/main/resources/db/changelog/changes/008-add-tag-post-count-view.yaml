@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: 008-create-tag-post-count-view
+      author: dev
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: post_tags
+      changes:
+        - sql:
+            sql: |
+              CREATE OR REPLACE VIEW tag_post_count AS
+              SELECT
+                  t.name AS tag_name,
+                  COUNT(pt.post_id) AS post_count
+              FROM tags t
+              JOIN post_tags pt ON t.id = pt.tag_id
+              GROUP BY t.name
+              ORDER BY post_count DESC;

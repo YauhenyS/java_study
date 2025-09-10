@@ -1,4 +1,4 @@
-package smulko.yauheni;
+package smulko.yauheni.service;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,6 @@ import smulko.yauheni.repository.PostRepository;
 import smulko.yauheni.repository.TagRepository;
 import smulko.yauheni.repository.UserRepository;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;

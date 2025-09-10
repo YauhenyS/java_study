@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: 010-create-active-users-view
+      author: dev
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: posts
+      changes:
+        - sql:
+            sql: |
+              CREATE OR REPLACE VIEW active_users_last_10_days AS
+              SELECT
+                  u.id AS user_id,
+                  u.username,
+                  COUNT(p.id) AS post_count
+              FROM users u
+              JOIN posts p ON u.id = p.user_id
+              WHERE p.created_at >= CURRENT_DATE - INTERVAL '10 days'
+              GROUP BY u.id, u.username
+              ORDER BY post_count DESC;

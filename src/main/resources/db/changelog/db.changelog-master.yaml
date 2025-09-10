@@ -13,3 +13,11 @@ databaseChangeLog:
       file: db/changelog/changes/006-create-fulltext-index.yaml
   - include:
       file: db/changelog/changes/007-create-audit-trigger.yaml
+  - include:
+      file: db/changelog/changes/008-add-tag-post-count-view.yaml
+  - include:
+      file: db/changelog/changes/009-add-indexes.yaml
+  - include:
+      file: db/changelog/changes/010-add-active-users-view.yaml
+  - include:
+      file: db/changelog/changes/011-add-explain-examples.yaml
